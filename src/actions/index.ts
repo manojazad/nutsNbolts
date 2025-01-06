@@ -26,6 +26,6 @@ export const searchAction = async ({ request }: SearchActionRequest) => {
 export const checkoutAction = async ({request} : CheckoutFormAction) => {
   const formData = await request.formData();
   const data = Object.fromEntries(formData);
-  const response = await customFetch.post("/orders", data);
+  await customFetch.post("/orders", data);
   return redirect('/');
 }

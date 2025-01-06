@@ -168,8 +168,6 @@ const SingleProduct = () => {
               title={product?.title}
               category={product?.category}
               price={product?.price}
-              popularity={product?.popularity}
-              stock={product?.stock}
             />
           ))}
         </div>
