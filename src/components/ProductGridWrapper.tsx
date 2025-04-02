@@ -1,5 +1,5 @@
 import React, { ReactElement, useCallback, useEffect, useState } from "react";
-import customFetch from "../axios/custom";
+import axios from "axios";
 import { useAppDispatch, useAppSelector } from "../hooks";
 import {
   setShowingProducts,
@@ -34,7 +34,7 @@ const ProductGridWrapper = ({
       if (!query || query.length === 0) {
         query = "";
       }
-      const response = await customFetch("/products");
+      const response = await axios.get("/data/products.json");
       const allProducts = await response.data;
       let searchedProducts = allProducts.filter((product: Product) =>
         product.title.toLowerCase().includes(query.toLowerCase())

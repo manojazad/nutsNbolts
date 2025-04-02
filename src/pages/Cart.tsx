@@ -35,7 +35,7 @@ const Cart = () => {
                 <li key={product.id} className="flex py-6 sm:py-10">
                   <div className="flex-shrink-0">
                     <img
-                      src={`/src/assets/${product.image}`}
+                      src={`https://nutsbolts-image.s3.ap-south-1.amazonaws.com/${product.image}`}
                       alt={product.title}
                       className="h-24 w-24 object-cover object-center sm:h-48 sm:w-48"
                     />

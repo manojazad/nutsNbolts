@@ -439,7 +439,7 @@ const Checkout = () => {
                   <li key={product?.id} className="flex px-4 py-6 sm:px-6">
                     <div className="flex-shrink-0">
                       <img
-                        src={`/src/assets/${product?.image}`}
+                        src={`https://nutsbolts-image.s3.ap-south-1.amazonaws.com/${product?.image}`}
                         alt={product?.title}
                         className="w-20 rounded-md"
                       />

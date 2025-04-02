@@ -13,6 +13,7 @@ import WithSelectInputWrapper from "../utils/withSelectInputWrapper";
 import WithNumberInputWrapper from "../utils/withNumberInputWrapper";
 import { formatCategoryName } from "../utils/formatCategoryName";
 import toast from "react-hot-toast";
+import axios from "axios";
 
 const SingleProduct = () => {
   const [products, setProducts] = useState<Product[]>([]);
@@ -29,22 +30,17 @@ const SingleProduct = () => {
   const QuantityInputUpgrade = WithNumberInputWrapper(QuantityInput);
 
   useEffect(() => {
-    const fetchSingleProduct = async () => {
-      const response = await fetch(
-        `http://localhost:3000/products/${params.id}`
-      );
-      const data = await response.json();
-      setSingleProduct(data);
-    };
-
     const fetchProducts = async () => {
-      const response = await fetch("http://localhost:3000/products");
-      const data = await response.json();
-      setProducts(data);
+      const response = await axios.get("/data/products.json");
+      const allProducts = await response.data;
+      const searchedProduct = allProducts.find((product: Product) =>
+        product.id === params.id
+      );
+      setSingleProduct(searchedProduct);
+      setProducts(allProducts);
     };
-    fetchSingleProduct();
     fetchProducts();
-  }, [params.id]);
+  }, [params.id, singleProduct, products]);
 
   const handleAddToCart = () => {
     if (singleProduct) {
@@ -71,7 +67,7 @@ const SingleProduct = () => {
       <div className="grid grid-cols-3 gap-x-8 max-lg:grid-cols-1">
         <div className="lg:col-span-2">
           <img
-            src={`/src/assets/${singleProduct?.image}`}
+            src={`https://nutsbolts-image.s3.ap-south-1.amazonaws.com/${singleProduct?.image}`}
             alt={singleProduct?.title}
           />
         </div>

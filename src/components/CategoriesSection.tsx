@@ -9,22 +9,37 @@ const CategoriesSection = () => {
       <div className="flex justify-between flex-wrap gap-y-10">
         <CategoryItem
           categoryTitle="Special Edition"
-          image="luxury category 1.png"
+          image="cat-1.jpg"
           link="special-edition"
         />
         <CategoryItem
           categoryTitle="Luxury Collection"
-          image="luxury category 2.png"
+          image="cat-2.jpg"
           link="luxury-collection"
         />
         <CategoryItem
           categoryTitle="Summer Edition"
-          image="luxury category 3.png"
+          image="cat-3.jpg"
           link="summer-edition"
         />
         <CategoryItem
           categoryTitle="Unique Collection"
-          image="luxury category 4.png"
+          image="cat-4.jpg"
+          link="unique-collection"
+        />
+        <CategoryItem
+          categoryTitle="Unique Collection"
+          image="cat-5.jpg"
+          link="unique-collection"
+        />
+        <CategoryItem
+          categoryTitle="Unique Collection"
+          image="cat-6.jpg"
+          link="unique-collection"
+        />
+        <CategoryItem
+          categoryTitle="Unique Collection"
+          image="cat-7.jpg"
           link="unique-collection"
         />
       </div>
