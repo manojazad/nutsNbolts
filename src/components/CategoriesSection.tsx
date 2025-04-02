@@ -42,6 +42,11 @@ const CategoriesSection = () => {
           image="cat-7.jpg"
           link="unique-collection"
         />
+        <CategoryItem
+          categoryTitle="Special Edition"
+          image="cat-1.jpg"
+          link="special-edition"
+        />
       </div>
     </div>
   );

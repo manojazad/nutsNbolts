@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 
 const boxStyle: React.CSSProperties = {
   padding: "10px",
-  backgroundColor: "rgba(128, 128, 128, 0.5)", 
+  backgroundColor: "rgba(24, 23, 23, 0.6)", 
   justifyContent: "center",
   alignItems: "center",
   color: "white",
@@ -19,7 +19,7 @@ const Banner = () => {
       <h3 className="text-white text-center text-3xl font-normal leading-[72px] tracking-[0.9px] max-sm:text-xl max-[400px]:text-lg">
         The High-Quality Collection
       </h3>
-      <div className="flex justify-center items-center gap-3 pb-10 max-[400px]:flex-col max-[400px]:gap-1 max-sm:w-[350px] max-[400px]:w-[300px]">
+      <div className="flex justify-center items-center gap-3 pb-10 max-[400px]:flex-col max-[400px]:gap-1 max-sm:w-[350px]">
       <Link to="/shop" className="bg-white text-black text-center text-xl border border-[rgba(0, 0, 0, 0.40)] font-normal tracking-[0.6px] leading-[72px] w-full h-12 flex items-center justify-center">
           Shop Now
         </Link>

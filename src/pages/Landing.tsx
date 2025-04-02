@@ -4,8 +4,9 @@ const Landing = () => {
   return (
     <>
       <Banner />
-      <HomeCollectionSection />
       <CategoriesSection />
+      <HomeCollectionSection />
+      
       
     </>
   );
