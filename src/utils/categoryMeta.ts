@@ -24,5 +24,5 @@ export const getCategoryIcon = (id: number): string => {
 };
 
 export const getCategoryImage = (id: number): string => {
-  return `https://spjfxhrccvqursazchah.supabase.co/storage/v1/object/public/category/${id}.jpeg`;
+  return `https://gynvfilnfwxbvnkbatpa.supabase.co/storage/v1/object/public/category/${id}.jpeg`;
 };
