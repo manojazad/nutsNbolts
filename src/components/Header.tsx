@@ -1,4 +1,4 @@
-import { HiBars3 } from "react-icons/hi2";
+import { HiBars3, HiMagnifyingGlass } from "react-icons/hi2";
 import { Link } from "react-router-dom";
 import SidebarMenu from "./SidebarMenu";
 import { useState } from "react";
@@ -20,7 +20,13 @@ const Header = () => {
           Nuts &amp; Bolts
         </Link>
         <div className="flex gap-4 items-center max-sm:gap-2">
-          
+          <Link
+            to="/search"
+            className="text-gray-600 hover:text-secondaryBrown transition-colors"
+            title="Search Products"
+          >
+            <HiMagnifyingGlass className="text-2xl max-sm:text-xl" />
+          </Link>
         </div>
       </header>
       <SidebarMenu

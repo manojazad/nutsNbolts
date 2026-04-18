@@ -1,11 +1,56 @@
 import { useParams, Link } from "react-router-dom";
 import { useProducts } from "../hooks/useData";
 import { toSlug } from "../utils/slug";
-import { getCategoryColor, getCategoryIcon, getCategoryImage } from "../utils/categoryMeta";
+import { getCategoryColor, getCategoryIcon } from "../utils/categoryMeta";
 import { useState } from "react";
 import toast from "react-hot-toast";
 import { supabase } from "../lib/supabase";
 
+/* ── Skeleton loader ── */
+const Pulse = ({ className = "" }: { className?: string }) => (
+  <div className={`animate-pulse bg-gray-200 rounded ${className}`} />
+);
+
+const ProductSkeleton = () => (
+  <div className="max-w-screen-2xl mx-auto px-5 max-[400px]:px-3 pb-16">
+    <div className="flex gap-2 my-4">
+      <Pulse className="h-4 w-10" />
+      <Pulse className="h-4 w-4" />
+      <Pulse className="h-4 w-24" />
+      <Pulse className="h-4 w-4" />
+      <Pulse className="h-4 w-32" />
+    </div>
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      <div className="space-y-4">
+        <Pulse className="aspect-square max-h-80 rounded-lg" />
+        <Pulse className="h-8 w-3/4" />
+        <Pulse className="h-4 w-24" />
+        <div className="border-t pt-4 space-y-2">
+          <Pulse className="h-4 w-full" />
+          <Pulse className="h-4 w-full" />
+          <Pulse className="h-4 w-2/3" />
+        </div>
+        <Pulse className="h-20 rounded-lg" />
+      </div>
+      <div className="bg-gray-50 rounded-lg p-6 space-y-4">
+        <Pulse className="h-7 w-44" />
+        <Pulse className="h-10 w-full rounded-md" />
+        <Pulse className="h-24 w-full rounded-md" />
+        <Pulse className="h-px w-full" />
+        <Pulse className="h-6 w-32" />
+        <div className="grid grid-cols-2 gap-4">
+          <Pulse className="h-10 rounded-md" />
+          <Pulse className="h-10 rounded-md" />
+          <Pulse className="h-10 rounded-md" />
+          <Pulse className="h-10 rounded-md" />
+        </div>
+        <Pulse className="h-12 w-full rounded-md" />
+      </div>
+    </div>
+  </div>
+);
+
+/* ── Main component ── */
 const ProductPage = () => {
   const { slug } = useParams<{ slug: string }>();
   const { products, loading } = useProducts();
@@ -22,13 +67,7 @@ const ProductPage = () => {
   const [submitted, setSubmitted] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
 
-  if (loading) {
-    return (
-      <div className="max-w-screen-2xl mx-auto px-5 py-16 text-center text-gray-500">
-        Loading...
-      </div>
-    );
-  }
+  if (loading) return <ProductSkeleton />;
 
   // Find product across all categories
   let foundProduct: { id: number; name: string } | null = null;
@@ -173,14 +212,6 @@ const ProductPage = () => {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         {/* Left: Product Info */}
         <div>
-          <div className="rounded-lg overflow-hidden h-72">
-            <img
-              src={getCategoryImage(foundCategory.id)}
-              alt={foundCategory.name}
-              className="w-full h-full object-cover"
-            />
-          </div>
-
           <div className="mt-6">
             <h1 className="text-3xl font-bold">{foundProduct.name}</h1>
             <p className="text-gray-500 mt-1">SKU: PT-{foundProduct.id}</p>

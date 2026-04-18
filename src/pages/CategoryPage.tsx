@@ -1,89 +1,155 @@
 import { useParams, Link } from "react-router-dom";
 import { useProducts } from "../hooks/useData";
 import { toSlug } from "../utils/slug";
-import { getCategoryColor, getCategoryIcon } from "../utils/categoryMeta";
+import {
+  getCategoryIcon,
+  getCategoryImage,
+} from "../utils/categoryMeta";
 import { useState } from "react";
 import ProductItem from "../components/ProductItem";
 
+/* ── Skeleton loader ── */
+const SkeletonPulse = ({ className = "" }: { className?: string }) => (
+  <div className={`animate-pulse bg-gray-200 rounded ${className}`} />
+);
+
+const CategorySkeleton = () => (
+  <div className="max-w-screen-2xl mx-auto px-5 max-[400px]:px-3 py-4">
+    {/* banner skeleton */}
+    <div className="flex gap-6 my-6">
+      <SkeletonPulse className="w-40 h-40 sm:w-48 sm:h-48 rounded-xl flex-shrink-0" />
+      <div className="flex-1 space-y-3 py-2">
+        <SkeletonPulse className="h-8 w-2/3" />
+        <SkeletonPulse className="h-4 w-1/3" />
+        <SkeletonPulse className="h-4 w-1/2" />
+      </div>
+    </div>
+    {/* breadcrumb */}
+    <div className="flex gap-2 mb-6">
+      <SkeletonPulse className="h-4 w-12" />
+      <SkeletonPulse className="h-4 w-4" />
+      <SkeletonPulse className="h-4 w-32" />
+    </div>
+    {/* filter pills */}
+    <div className="flex gap-2 mb-8">
+      {Array.from({ length: 6 }).map((_, i) => (
+        <SkeletonPulse key={i} className="h-9 w-24 rounded-full" />
+      ))}
+    </div>
+    {/* section title */}
+    <SkeletonPulse className="h-6 w-44 mb-4" />
+    {/* product cards */}
+    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+      {Array.from({ length: 8 }).map((_, i) => (
+        <div key={i} className="border border-gray-100 rounded-lg p-4 space-y-3">
+          <div className="flex gap-3">
+            <SkeletonPulse className="h-10 w-10 rounded-lg flex-shrink-0" />
+            <div className="flex-1 space-y-2">
+              <SkeletonPulse className="h-4 w-full" />
+              <SkeletonPulse className="h-3 w-2/3" />
+            </div>
+          </div>
+          <SkeletonPulse className="h-3 w-20" />
+          <SkeletonPulse className="h-9 w-full rounded" />
+        </div>
+      ))}
+    </div>
+  </div>
+);
+
+/* ── Main component ── */
 const CategoryPage = () => {
   const { slug } = useParams<{ slug: string }>();
   const { products, loading } = useProducts();
   const [activeSubCat, setActiveSubCat] = useState<number | null>(null);
 
-  if (loading) {
-    return (
-      <div className="max-w-screen-2xl mx-auto px-5 py-16 text-center text-gray-500">
-        Loading...
-      </div>
-    );
-  }
+  if (loading) return <CategorySkeleton />;
 
   const category = products.find((c) => toSlug(c.name) === slug);
 
   if (!category) {
     return (
-      <div className="max-w-screen-2xl mx-auto px-5 py-16 text-center">
-        <h1 className="text-4xl font-bold mb-4">Category Not Found</h1>
-        <p className="text-gray-600 mb-8">
-          The category you are looking for does not exist.
+      <div className="max-w-screen-2xl mx-auto px-5 py-24 text-center">
+        <div className="text-6xl mb-4">🔍</div>
+        <h1 className="text-3xl font-bold mb-3">Category Not Found</h1>
+        <p className="text-gray-500 mb-8 max-w-md mx-auto">
+          The category you are looking for doesn't exist or may have been removed.
         </p>
         <Link
           to="/"
-          className="bg-secondaryBrown text-white px-6 py-3 rounded hover:bg-opacity-90"
+          className="inline-flex items-center gap-2 bg-secondaryBrown text-white px-6 py-3 rounded-lg hover:bg-opacity-90 transition-colors"
         >
-          Back to Home
+          ← Back to Home
         </Link>
       </div>
     );
   }
+
+  const totalProducts = category.subCategories.reduce(
+    (sum, sc) => sum + sc.productTypes.length,
+    0
+  );
 
   const filteredSubCategories = activeSubCat
     ? category.subCategories.filter((sc) => sc.id === activeSubCat)
     : category.subCategories;
 
   return (
-    <div className="max-w-screen-2xl mx-auto px-5 max-[400px]:px-3">
-      {/* Category Header */}
-      <div
-        className="rounded-lg text-white p-8 my-6 flex items-center gap-5"
-        style={{ backgroundColor: getCategoryColor(category.id) }}
-      >
-        <span className="text-5xl">{getCategoryIcon(category.id)}</span>
-        <div>
-          <h1 className="text-4xl font-bold max-sm:text-2xl">{category.name}</h1>
-          <p className="text-white/80 mt-2">
-            {category.subCategories.length} subcategories &middot;{" "}
-            {category.subCategories.reduce(
-              (sum, sc) => sum + sc.productTypes.length,
-              0
-            )}{" "}
-            products
+    <div className="max-w-screen-2xl mx-auto px-5 max-[400px]:px-3 pb-16">
+      {/* ── Hero Banner ── */}
+      <div className="flex flex-col sm:flex-row gap-6 my-6">
+        <div className="w-40 h-40 sm:w-48 sm:h-48 rounded-xl overflow-hidden flex-shrink-0 bg-gray-100">
+          <img
+            src={getCategoryImage(category.id)}
+            alt={category.name}
+            className="w-full h-full object-cover"
+          />
+        </div>
+        <div className="flex flex-col justify-center">
+          <div className="flex items-center gap-3 mb-2">
+            <span className="text-3xl sm:text-4xl">
+              {getCategoryIcon(category.id)}
+            </span>
+            <h1 className="text-3xl sm:text-4xl font-bold text-gray-900">
+              {category.name}
+            </h1>
+          </div>
+          <p className="text-gray-500 text-sm sm:text-base">
+            {category.subCategories.length} subcategories &middot; {totalProducts} products
+          </p>
+          <p className="text-gray-400 text-sm mt-2 max-w-lg">
+            Browse our full range of {category.name.toLowerCase()} products. Select a subcategory or request a quote on any item.
           </p>
         </div>
       </div>
 
-      {/* Breadcrumb */}
-      <nav className="text-sm text-gray-500 mb-6">
-        <Link to="/" className="hover:text-black">
+      {/* ── Breadcrumb ── */}
+      <nav className="text-sm text-gray-400 mb-6 flex items-center gap-1.5">
+        <Link to="/" className="hover:text-secondaryBrown transition-colors">
           Home
         </Link>
-        <span className="mx-2">/</span>
-        <span className="text-black">{category.name}</span>
+        <span>/</span>
+        <span className="text-gray-800 font-medium">{category.name}</span>
       </nav>
 
-      {/* Subcategory Filter */}
+      {/* ── Subcategory Filter Pills ── */}
       <div className="mb-8">
-        <h2 className="text-lg font-bold mb-3">Subcategories</h2>
+        <div className="flex items-center gap-3 mb-3">
+          <h2 className="text-lg font-bold">Browse by Subcategory</h2>
+          <span className="text-xs text-gray-400 bg-gray-100 px-2 py-0.5 rounded-full">
+            {category.subCategories.length}
+          </span>
+        </div>
         <div className="flex flex-wrap gap-2">
           <button
             onClick={() => setActiveSubCat(null)}
-            className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
+            className={`px-4 py-2 rounded-full text-sm font-medium border transition-all ${
               activeSubCat === null
-                ? "bg-secondaryBrown text-white"
-                : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                ? "bg-secondaryBrown text-white border-secondaryBrown shadow-sm"
+                : "bg-white text-gray-600 border-gray-200 hover:border-gray-300 hover:bg-gray-50"
             }`}
           >
-            All
+            All ({totalProducts})
           </button>
           {category.subCategories.map((sc) => (
             <button
@@ -91,24 +157,29 @@ const CategoryPage = () => {
               onClick={() =>
                 setActiveSubCat(activeSubCat === sc.id ? null : sc.id)
               }
-              className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
+              className={`px-4 py-2 rounded-full text-sm font-medium border transition-all ${
                 activeSubCat === sc.id
-                  ? "bg-secondaryBrown text-white"
-                  : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                  ? "bg-secondaryBrown text-white border-secondaryBrown shadow-sm"
+                  : "bg-white text-gray-600 border-gray-200 hover:border-gray-300 hover:bg-gray-50"
               }`}
             >
               {sc.name}
+              <span className="ml-1.5 opacity-70">({sc.productTypes.length})</span>
             </button>
           ))}
         </div>
       </div>
 
-      {/* Products Grid */}
+      {/* ── Product Sections ── */}
       {filteredSubCategories.map((sc) => (
-        <div key={sc.id} className="mb-10">
-          <h3 className="text-2xl font-semibold mb-4 border-b pb-2">
-            {sc.name}
-          </h3>
+        <section key={sc.id} className="mb-12">
+          <div className="flex items-center gap-3 mb-5">
+            <div className="w-1 h-6 rounded-full bg-secondaryBrown" />
+            <h3 className="text-xl font-bold text-gray-900">{sc.name}</h3>
+            <span className="text-xs text-gray-400">
+              {sc.productTypes.length} products
+            </span>
+          </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
             {sc.productTypes.map((pt) => (
               <ProductItem
@@ -122,8 +193,15 @@ const CategoryPage = () => {
               />
             ))}
           </div>
-        </div>
+        </section>
       ))}
+
+      {filteredSubCategories.length === 0 && (
+        <div className="py-16 text-center text-gray-400">
+          <div className="text-4xl mb-3">📭</div>
+          <p>No products found in this subcategory.</p>
+        </div>
+      )}
     </div>
   );
 };

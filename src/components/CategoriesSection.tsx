@@ -8,7 +8,7 @@ const CategoriesSection = () => {
 
   if (loading) {
     return (
-      <div className="max-w-screen-2xl px-5 mx-auto mt-24">
+      <div className="max-w-screen-2xl px-5 mx-auto mt-20">
         <h2 className="text-black text-5xl font-normal tracking-[1.56px] max-sm:text-4xl mb-12">
           Our Categories
         </h2>
@@ -18,7 +18,7 @@ const CategoriesSection = () => {
   }
 
   return (
-    <div id="categories" className="max-w-screen-2xl px-5 mx-auto mt-24">
+    <div id="categories" className="max-w-screen-2xl px-5 mx-auto mt-8">
       <h2 className="text-black text-5xl font-normal tracking-[1.56px] max-sm:text-4xl mb-12">
         Our Categories
       </h2>

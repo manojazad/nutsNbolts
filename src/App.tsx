@@ -4,6 +4,7 @@ import Landing from "./pages/Landing";
 import CategoryPage from "./pages/CategoryPage";
 import ProductPage from "./pages/ProductPage";
 import ContactPage from "./pages/ContactPage";
+import SearchPage from "./pages/SearchPage";
 import NotFound from "./pages/NotFound";
 import AdminLogin from "./pages/AdminLogin";
 import AdminLayout from "./pages/AdminLayout";
@@ -20,6 +21,7 @@ const router = createBrowserRouter([
       { index: true, element: <Landing /> },
       { path: "category/:slug", element: <CategoryPage /> },
       { path: "product/:slug", element: <ProductPage /> },
+      { path: "search", element: <SearchPage /> },
       { path: "contact", element: <ContactPage /> },
       { path: "*", element: <NotFound /> },
     ],

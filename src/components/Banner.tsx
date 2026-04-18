@@ -2,35 +2,42 @@ import { Link } from "react-router-dom";
 
 const Banner = () => {
   return (
-    <div className="banner w-full flex flex-col justify-end items-center max-sm:h-[550px] max-sm:gap-2">
-      <div
-        style={{
-          padding: "10px",
-          backgroundColor: "rgba(24, 23, 23, 0.6)",
-          justifyContent: "center",
-          alignItems: "center",
-          color: "white",
-        }}
-      >
-        <h2 className="text-white text-center text-6xl font-bold tracking-[1.86px] leading-[60px] max-sm:text-4xl max-[400px]:text-3xl">
-          Industrial &amp; Business <br /> Supply Solutions
-        </h2>
-        <h3 className="text-white text-center text-3xl font-normal leading-[72px] tracking-[0.9px] max-sm:text-xl max-[400px]:text-lg">
-          Request Custom Quotes for Your Business Needs
-        </h3>
-        <div className="flex justify-center items-center gap-3 pb-10 max-[400px]:flex-col max-[400px]:gap-1 max-sm:w-[350px]">
-          <a
-            href="#categories"
-            className="bg-white text-black text-center text-xl border font-normal tracking-[0.6px] leading-[72px] w-full h-12 flex items-center justify-center"
-          >
-            Browse Categories
-          </a>
-          <Link
-            to="/contact"
-            className="text-white border-white border-2 text-center text-xl font-normal tracking-[0.6px] leading-[72px] w-full h-12 flex items-center justify-center"
-          >
-            Contact Sales
-          </Link>
+    <div className="bg-gray-50 overflow-hidden">
+      <div className="max-w-screen-2xl mx-auto px-5 py-12 sm:py-16 grid grid-cols-1 md:grid-cols-2 items-center gap-8">
+        {/* Left: Text */}
+        <div>
+          <h1 className="text-4xl sm:text-5xl font-bold text-gray-900 leading-tight tracking-tight">
+            Your One-Stop <br />
+            <span className="text-secondaryBrown">Industrial Supply</span> Partner
+          </h1>
+          <p className="text-gray-500 mt-4 text-lg leading-relaxed">
+            Welcome to Nuts &amp; Bolts — your trusted B2B partner for
+            industrial hardware, tools, and supplies. Request custom quotes
+            tailored to your business needs.
+          </p>
+          <div className="flex gap-3 mt-8 max-[400px]:flex-col">
+            <a
+              href="#categories"
+              className="bg-secondaryBrown text-white px-8 py-3 rounded-lg text-base font-medium hover:bg-opacity-90 transition-colors text-center"
+            >
+              Browse Categories
+            </a>
+            <Link
+              to="/search"
+              className="border-2 border-secondaryBrown text-secondaryBrown px-8 py-3 rounded-lg text-base font-medium hover:bg-secondaryBrown hover:text-white transition-colors text-center"
+            >
+              Search Products
+            </Link>
+          </div>
+        </div>
+
+        {/* Right: Image — hidden on mobile */}
+        <div className="hidden md:block">
+          <img
+            src="https://gynvfilnfwxbvnkbatpa.supabase.co/storage/v1/object/public/banner/banner.jpg"
+            alt="Industrial supplies"
+            
+          />
         </div>
       </div>
     </div>
