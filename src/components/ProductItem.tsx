@@ -1,54 +1,49 @@
 import { Link } from "react-router-dom";
-import { formatCategoryName } from "../utils/formatCategoryName";
+import { getCategoryColor, getCategoryIcon } from "../utils/categoryMeta";
+
+interface ProductItemProps {
+  productId: number;
+  productName: string;
+  categoryId: number;
+  categoryName: string;
+  subCategoryName: string;
+  slug: string;
+}
 
 const ProductItem = ({
-  id,
-  image,
-  title,
-  category,
-  price,
-}: {
-  id: string;
-  image: string;
-  title: string;
-  category: string;
-  price: number;
-}) => {
+  productId,
+  productName,
+  categoryId,
+  slug,
+  subCategoryName,
+}: ProductItemProps) => {
   return (
-    <div className="w-[300px] flex flex-col gap-2 justify-center max-md:w-[300px]">
-      <Link
-        to={`/product/${id}`}
-        className="w-full h-[300px] max-md:h-[200px] overflow-hidden"
-      >
-        <img src={`https://nutsbolts-image.s3.ap-south-1.amazonaws.com/${image}`} alt={title} />
-      </Link>
-      <Link
-        to={`/product/${id}`}
-        className="text-black text-center text-3xl tracking-[1.02px] max-md:text-2xl"
-      >
-        <h2>{title}</h2>
-      </Link>
-      <p className="text-secondaryBrown text-lg tracking-wide text-center max-md:text-base">
-        {formatCategoryName(category)}{" "}
-      </p>
-      <p className="text-black text-2xl text-center font-bold max-md:text-xl">
-        ${price}
-      </p>
-      <div className="w-full flex flex-col gap-1">
-        <Link
-          to={`/product/${id}`}
-          className="text-white bg-secondaryBrown text-center text-xl font-normal tracking-[0.6px] leading-[72px] w-full h-12 flex items-center justify-center max-md:text-base"
+    <Link
+      to={`/product/${slug}`}
+      className="bg-white rounded-lg border border-gray-200 hover:border-secondaryBrown hover:shadow-md transition-all flex flex-col p-4 group"
+    >
+      <div className="flex items-start gap-3 mb-3">
+        <span
+          className="text-2xl w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0"
+          style={{ backgroundColor: `${getCategoryColor(categoryId)}18` }}
         >
-          View product
-        </Link>
-        <Link
-          to={`/product/${id}`}
-          className="bg-white text-black text-center text-xl border border-[rgba(0, 0, 0, 0.40)] font-normal tracking-[0.6px] leading-[72px] w-full h-12 flex items-center justify-center max-md:text-base"
-        >
-          Learn more
-        </Link>
+          {getCategoryIcon(categoryId)}
+        </span>
+        <div className="min-w-0">
+          <h3 className="text-base font-semibold text-gray-900 leading-tight group-hover:text-secondaryBrown transition-colors">
+            {productName}
+          </h3>
+          <p className="text-xs text-gray-500 mt-1">{subCategoryName}</p>
+        </div>
       </div>
-    </div>
+      <p className="text-xs text-gray-400 mb-3">SKU: PT-{productId}</p>
+      <div className="mt-auto">
+        <span className="block w-full text-center bg-secondaryBrown text-white py-2 rounded text-sm font-medium group-hover:bg-opacity-90 transition-colors">
+          Get Quote
+        </span>
+      </div>
+    </Link>
   );
 };
+
 export default ProductItem;

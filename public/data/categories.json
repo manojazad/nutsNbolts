@@ -1,0 +1,110 @@
+[
+  {
+    "id": 1,
+    "name": "Office Supplies"
+  },
+  {
+    "id": 2,
+    "name": "Material Handling and Packaging"
+  },
+  {
+    "id": 3,
+    "name": "Power Tools"
+  },
+  {
+    "id": 4,
+    "name": "Electrical"
+  },
+  {
+    "id": 5,
+    "name": "Cleaning"
+  },
+  {
+    "id": 6,
+    "name": "Furniture, Hospitality and Food Service"
+  },
+  {
+    "id": 7,
+    "name": "Hand Tools"
+  },
+  {
+    "id": 8,
+    "name": "Agriculture Garden & Landscaping"
+  },
+  {
+    "id": 9,
+    "name": "Industrial Automation"
+  },
+  {
+    "id": 10,
+    "name": "Safety"
+  },
+  {
+    "id": 11,
+    "name": "Testing and Measuring Instruments"
+  },
+  {
+    "id": 12,
+    "name": "Hydraulics and Pneumatics"
+  },
+  {
+    "id": 13,
+    "name": "IT Security"
+  },
+  {
+    "id": 14,
+    "name": "Pumps"
+  },
+  {
+    "id": 15,
+    "name": "Adhesives Sealants and Tape"
+  },
+  {
+    "id": 16,
+    "name": "Welding"
+  },
+  {
+    "id": 17,
+    "name": "Lab Supplies"
+  },
+  {
+    "id": 18,
+    "name": "Automotive Maintenance and Lubricants"
+  },
+  {
+    "id": 19,
+    "name": "Motors & Power Transmission"
+  },
+  {
+    "id": 20,
+    "name": "Medical Supplies & Equipment"
+  },
+  {
+    "id": 21,
+    "name": "Plumbing"
+  },
+  {
+    "id": 22,
+    "name": "Solar"
+  },
+  {
+    "id": 23,
+    "name": "Tooling and Cutting"
+  },
+  {
+    "id": 24,
+    "name": "Abrasives"
+  },
+  {
+    "id": 25,
+    "name": "Hardware"
+  },
+  {
+    "id": 26,
+    "name": "LED & Lights"
+  },
+  {
+    "id": 27,
+    "name": "Bearings"
+  }
+]

@@ -1,41 +1,33 @@
-interface Product {
-  id: string;
-  title: string;
-  image: string;
-  category: string;
-  price: number;
-  popularity: number;
-  stock: number;
-}
-
-interface ProductInCart extends Product {
-  id: string;
-  quantity: number;
-  size: string;
-  color: string;
-  stock: number;
-}
-
-interface User {
-  id: string;
-  name: string;
-  lastname: string;
-  email: string;
-  role: string;
-  password: string;
-}
-
-interface Order {
+interface Category {
   id: number;
-  orderStatus: string;
-  orderDate: string;
-  data: {
-    email: string;
-  };
-  products: ProductInCart[];
-  subtotal: number;
-  user: {
-    email: string;
-    id: number;
-  };
+  name: string;
+}
+
+interface ProductType {
+  id: number;
+  name: string;
+}
+
+interface SubCategory {
+  id: number;
+  name: string;
+  productTypes: ProductType[];
+}
+
+interface CategoryWithProducts extends Category {
+  subCategories: SubCategory[];
+}
+
+interface QuoteRequest {
+  productId: number;
+  productName: string;
+  categoryName: string;
+  subCategoryName: string;
+  quantity: number;
+  specifications: string;
+  contactName: string;
+  companyName: string;
+  email: string;
+  phone: string;
+  deliveryLocation: string;
 }

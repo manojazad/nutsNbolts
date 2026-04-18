@@ -1,15 +1,37 @@
 import { Link } from "react-router-dom";
+import { getCategoryImage } from "../utils/categoryMeta";
 
-const CategoryItem = ({ categoryTitle, image, link } : { categoryTitle: string; image: string; link: string; }) => {
+interface CategoryItemProps {
+  id: number;
+  name: string;
+  slug: string;
+}
+
+const CategoryItem = ({ id, name, slug }: CategoryItemProps) => {
   return (
-    <div className="w-[300px] relative max-[1250px]:w-[400px] max-[1250px]:h-[400px] max-sm:w-[300px] max-sm:h-[300px]">
-      <Link to={`/shop/${link}`}>
-      <img src={`https://nutsbolts-image.s3.ap-south-1.amazonaws.com/${image}`} className="h-full w-full" />
-      <div className="bg-secondaryBrown text-white absolute bottom-0 w-full h-16 flex justify-center items-center max-sm:h-12">
-        <h3 className="text-2xl max-sm:text-xl">{ categoryTitle }</h3>
+    <Link
+      to={`/category/${slug}`}
+      className="group relative overflow-hidden rounded-lg shadow-md hover:shadow-xl transition-all duration-300"
+    >
+      <div className="h-40 overflow-hidden">
+        <img
+          src={getCategoryImage(id)}
+          alt={name}
+          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+        />
       </div>
-      </Link>
-    </div>
+      <div className="p-4">
+        <h3 className="text-lg font-bold text-gray-900 leading-tight mb-2">
+          {name}
+        </h3>
+      </div>
+      <div className="bg-white p-3 text-center">
+        <span className="text-sm text-gray-600 group-hover:text-black transition-colors">
+          View Products &rarr;
+        </span>
+      </div>
+    </Link>
   );
 };
+
 export default CategoryItem;
