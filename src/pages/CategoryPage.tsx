@@ -97,8 +97,9 @@ const CategoryPage = () => {
   return (
     <div className="max-w-screen-2xl mx-auto px-5 max-[400px]:px-3 pb-16">
       {/* ── Hero Banner ── */}
-      <div className="flex flex-col sm:flex-row gap-6 my-6">
-        <div className="w-40 h-40 sm:w-48 sm:h-48 rounded-xl overflow-hidden flex-shrink-0 bg-gray-100">
+      <div className="flex gap-4 my-5 items-center">
+        {/* Image — hidden on mobile */}
+        <div className="hidden sm:block w-36 h-36 md:w-44 md:h-44 rounded-xl overflow-hidden flex-shrink-0 bg-gray-100">
           <img
             src={getCategoryImage(category.id)}
             alt={category.name}
@@ -106,25 +107,25 @@ const CategoryPage = () => {
           />
         </div>
         <div className="flex flex-col justify-center">
-          <div className="flex items-center gap-3 mb-2">
-            <span className="text-3xl sm:text-4xl">
+          <div className="flex items-center gap-2 mb-1">
+            <span className="text-2xl sm:text-3xl">
               {getCategoryIcon(category.id)}
             </span>
-            <h1 className="text-3xl sm:text-4xl font-bold text-gray-900">
+            <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 leading-tight">
               {category.name}
             </h1>
           </div>
-          <p className="text-gray-500 text-sm sm:text-base">
+          <p className="text-gray-500 text-xs sm:text-sm">
             {category.subCategories.length} subcategories &middot; {totalProducts} products
           </p>
-          <p className="text-gray-400 text-sm mt-2 max-w-lg">
+          <p className="text-gray-400 text-xs sm:text-sm mt-1 max-w-lg hidden sm:block">
             Browse our full range of {category.name.toLowerCase()} products. Select a subcategory or request a quote on any item.
           </p>
         </div>
       </div>
 
       {/* ── Breadcrumb ── */}
-      <nav className="text-sm text-gray-400 mb-6 flex items-center gap-1.5">
+      <nav className="text-xs sm:text-sm text-gray-400 mb-4 flex items-center gap-1.5">
         <Link to="/" className="hover:text-secondaryBrown transition-colors">
           Home
         </Link>
@@ -132,55 +133,76 @@ const CategoryPage = () => {
         <span className="text-gray-800 font-medium">{category.name}</span>
       </nav>
 
-      {/* ── Subcategory Filter Pills ── */}
-      <div className="mb-8">
-        <div className="flex items-center gap-3 mb-3">
-          <h2 className="text-lg font-bold">Browse by Subcategory</h2>
-          <span className="text-xs text-gray-400 bg-gray-100 px-2 py-0.5 rounded-full">
-            {category.subCategories.length}
-          </span>
-        </div>
-        <div className="flex flex-wrap gap-2">
-          <button
-            onClick={() => setActiveSubCat(null)}
-            className={`px-4 py-2 rounded-full text-sm font-medium border transition-all ${
-              activeSubCat === null
-                ? "bg-secondaryBrown text-white border-secondaryBrown shadow-sm"
-                : "bg-white text-gray-600 border-gray-200 hover:border-gray-300 hover:bg-gray-50"
-            }`}
+      {/* ── Subcategory Filter ── */}
+      <div className="mb-6">
+        {/* Mobile: compact select dropdown */}
+        <div className="sm:hidden">
+          <select
+            value={activeSubCat ?? ""}
+            onChange={(e) =>
+              setActiveSubCat(e.target.value ? Number(e.target.value) : null)
+            }
+            className="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm bg-white focus:ring-2 focus:ring-secondaryBrown focus:border-transparent outline-none"
           >
-            All ({totalProducts})
-          </button>
-          {category.subCategories.map((sc) => (
+            <option value="">All Subcategories ({totalProducts})</option>
+            {category.subCategories.map((sc) => (
+              <option key={sc.id} value={sc.id}>
+                {sc.name} ({sc.productTypes.length})
+              </option>
+            ))}
+          </select>
+        </div>
+
+        {/* Desktop: pill buttons */}
+        <div className="hidden sm:block">
+          <div className="flex items-center gap-3 mb-3">
+            <h2 className="text-lg font-bold">Browse by Subcategory</h2>
+            <span className="text-xs text-gray-400 bg-gray-100 px-2 py-0.5 rounded-full">
+              {category.subCategories.length}
+            </span>
+          </div>
+          <div className="flex flex-wrap gap-2">
             <button
-              key={sc.id}
-              onClick={() =>
-                setActiveSubCat(activeSubCat === sc.id ? null : sc.id)
-              }
+              onClick={() => setActiveSubCat(null)}
               className={`px-4 py-2 rounded-full text-sm font-medium border transition-all ${
-                activeSubCat === sc.id
+                activeSubCat === null
                   ? "bg-secondaryBrown text-white border-secondaryBrown shadow-sm"
                   : "bg-white text-gray-600 border-gray-200 hover:border-gray-300 hover:bg-gray-50"
               }`}
             >
-              {sc.name}
-              <span className="ml-1.5 opacity-70">({sc.productTypes.length})</span>
+              All ({totalProducts})
             </button>
-          ))}
+            {category.subCategories.map((sc) => (
+              <button
+                key={sc.id}
+                onClick={() =>
+                  setActiveSubCat(activeSubCat === sc.id ? null : sc.id)
+                }
+                className={`px-4 py-2 rounded-full text-sm font-medium border transition-all ${
+                  activeSubCat === sc.id
+                    ? "bg-secondaryBrown text-white border-secondaryBrown shadow-sm"
+                    : "bg-white text-gray-600 border-gray-200 hover:border-gray-300 hover:bg-gray-50"
+                }`}
+              >
+                {sc.name}
+                <span className="ml-1.5 opacity-70">({sc.productTypes.length})</span>
+              </button>
+            ))}
+          </div>
         </div>
       </div>
 
       {/* ── Product Sections ── */}
       {filteredSubCategories.map((sc) => (
-        <section key={sc.id} className="mb-12">
-          <div className="flex items-center gap-3 mb-5">
-            <div className="w-1 h-6 rounded-full bg-secondaryBrown" />
-            <h3 className="text-xl font-bold text-gray-900">{sc.name}</h3>
+        <section key={sc.id} className="mb-10">
+          <div className="flex items-center gap-3 mb-4">
+            <div className="w-1 h-5 rounded-full bg-secondaryBrown" />
+            <h3 className="text-base sm:text-xl font-bold text-gray-900">{sc.name}</h3>
             <span className="text-xs text-gray-400">
-              {sc.productTypes.length} products
+              {sc.productTypes.length}
             </span>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+          <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
             {sc.productTypes.map((pt) => (
               <ProductItem
                 key={pt.id}
