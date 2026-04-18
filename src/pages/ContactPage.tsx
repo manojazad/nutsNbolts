@@ -1,5 +1,6 @@
 import { useState } from "react";
 import toast from "react-hot-toast";
+import { supabase } from "../lib/supabase";
 
 const ContactPage = () => {
   const [formData, setFormData] = useState({
@@ -17,13 +18,27 @@ const ContactPage = () => {
     setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.name || !formData.email || !formData.message) {
       toast.error("Please fill in all required fields");
       return;
     }
-    console.log("Contact form submitted:", formData);
+
+    const { error } = await supabase.from("contact_messages").insert({
+      name: formData.name,
+      company: formData.company,
+      email: formData.email,
+      phone: formData.phone,
+      message: formData.message,
+    });
+
+    if (error) {
+      toast.error("Failed to send message. Please try again.");
+      console.error(error);
+      return;
+    }
+
     toast.success("Message sent successfully!");
     setSubmitted(true);
   };

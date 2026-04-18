@@ -4,6 +4,7 @@ import { toSlug } from "../utils/slug";
 import { getCategoryColor, getCategoryIcon, getCategoryImage } from "../utils/categoryMeta";
 import { useState } from "react";
 import toast from "react-hot-toast";
+import { supabase } from "../lib/supabase";
 
 const ProductPage = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -80,18 +81,30 @@ const ProductPage = () => {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!validate()) return;
 
-    const quoteRequest: QuoteRequest = {
-      productId: foundProduct!.id,
-      productName: foundProduct!.name,
-      categoryName: foundCategory!.name,
-      subCategoryName: foundSubCategory!.name,
-      ...formData,
-    };
-    console.log("Quote Request Submitted:", quoteRequest);
+    const { error } = await supabase.from("quote_requests").insert({
+      product_type_id: foundProduct!.id,
+      product_name: foundProduct!.name,
+      category_name: foundCategory!.name,
+      subcategory_name: foundSubCategory!.name,
+      quantity: formData.quantity,
+      specifications: formData.specifications,
+      contact_name: formData.contactName,
+      company_name: formData.companyName,
+      email: formData.email,
+      phone: formData.phone,
+      delivery_location: formData.deliveryLocation,
+    });
+
+    if (error) {
+      toast.error("Failed to submit quote request. Please try again.");
+      console.error(error);
+      return;
+    }
+
     toast.success("Quote request submitted successfully!");
     setSubmitted(true);
   };

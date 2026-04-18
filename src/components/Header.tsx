@@ -20,18 +20,7 @@ const Header = () => {
           Nuts &amp; Bolts
         </Link>
         <div className="flex gap-4 items-center max-sm:gap-2">
-          <Link
-            to="/"
-            className="text-sm font-medium hover:text-secondaryBrown transition-colors max-sm:hidden"
-          >
-            Home
-          </Link>
-          <Link
-            to="/contact"
-            className="text-sm font-medium bg-secondaryBrown text-white px-4 py-2 rounded hover:bg-opacity-90 transition-colors"
-          >
-            Get a Quote
-          </Link>
+          
         </div>
       </header>
       <SidebarMenu

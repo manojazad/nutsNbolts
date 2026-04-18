@@ -24,5 +24,5 @@ export const getCategoryIcon = (id: number): string => {
 };
 
 export const getCategoryImage = (id: number): string => {
-  return `https://nutsbolts-image.s3.ap-south-1.amazonaws.com/category/${id}.jpeg`;
+  return `https://spjfxhrccvqursazchah.supabase.co/storage/v1/object/public/category/${id}.jpeg`;
 };

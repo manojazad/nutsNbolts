@@ -5,6 +5,12 @@ import CategoryPage from "./pages/CategoryPage";
 import ProductPage from "./pages/ProductPage";
 import ContactPage from "./pages/ContactPage";
 import NotFound from "./pages/NotFound";
+import AdminLogin from "./pages/AdminLogin";
+import AdminLayout from "./pages/AdminLayout";
+import AdminDashboard from "./pages/AdminDashboard";
+import ManageProducts from "./pages/ManageProducts";
+import ViewQueries from "./pages/ViewQueries";
+import ViewMessages from "./pages/ViewMessages";
 
 const router = createBrowserRouter([
   {
@@ -16,6 +22,20 @@ const router = createBrowserRouter([
       { path: "product/:slug", element: <ProductPage /> },
       { path: "contact", element: <ContactPage /> },
       { path: "*", element: <NotFound /> },
+    ],
+  },
+  {
+    path: "/admin/login",
+    element: <AdminLogin />,
+  },
+  {
+    path: "/admin",
+    element: <AdminLayout />,
+    children: [
+      { index: true, element: <AdminDashboard /> },
+      { path: "products", element: <ManageProducts /> },
+      { path: "queries", element: <ViewQueries /> },
+      { path: "messages", element: <ViewMessages /> },
     ],
   },
 ]);
