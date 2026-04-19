@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { supabase } from "../lib/supabase";
+import { supabase } from "../../lib/supabase";
 import { Link } from "react-router-dom";
 
 const AdminDashboard = () => {
@@ -32,8 +32,8 @@ const AdminDashboard = () => {
   }, []);
 
   const cards = [
-    { label: "Categories", value: stats.categories, to: "/admin/products" },
-    { label: "Subcategories", value: stats.subcategories, to: "/admin/products" },
+    { label: "Categories", value: stats.categories, to: "/admin/categories" },
+    { label: "Subcategories", value: stats.subcategories, to: "/admin/categories" },
     { label: "Product Types", value: stats.products, to: "/admin/products" },
     { label: "Pending Quotes", value: stats.pendingQuotes, to: "/admin/queries", highlight: true },
     { label: "Unread Messages", value: stats.unreadMessages, to: "/admin/messages", highlight: true },

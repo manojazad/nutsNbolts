@@ -1,13 +1,15 @@
 import { Link } from "react-router-dom";
-import { getCategoryImage } from "../utils/categoryMeta";
+
+const PLACEHOLDER_IMAGE = "https://gynvfilnfwxbvnkbatpa.supabase.co/storage/v1/object/public/products/placeholder.jpeg";
 
 interface CategoryItemProps {
   id: number;
   name: string;
   slug: string;
+  image_url?: string | null;
 }
 
-const CategoryItem = ({ id, name, slug }: CategoryItemProps) => {
+const CategoryItem = ({ name, slug, image_url }: CategoryItemProps) => {
   return (
     <Link
       to={`/category/${slug}`}
@@ -15,7 +17,7 @@ const CategoryItem = ({ id, name, slug }: CategoryItemProps) => {
     >
       <div className="h-40 overflow-hidden">
         <img
-          src={getCategoryImage(id)}
+          src={image_url || PLACEHOLDER_IMAGE}
           alt={name}
           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
         />

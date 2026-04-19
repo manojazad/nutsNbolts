@@ -3,7 +3,6 @@ import { useProducts } from "../hooks/useData";
 import { toSlug } from "../utils/slug";
 import {
   getCategoryIcon,
-  getCategoryImage,
 } from "../utils/categoryMeta";
 import { useState } from "react";
 import ProductItem from "../components/ProductItem";
@@ -101,7 +100,7 @@ const CategoryPage = () => {
         {/* Image — hidden on mobile */}
         <div className="hidden sm:block w-36 h-36 md:w-44 md:h-44 rounded-xl overflow-hidden flex-shrink-0 bg-gray-100">
           <img
-            src={getCategoryImage(category.id)}
+            src={category.image_url || "https://gynvfilnfwxbvnkbatpa.supabase.co/storage/v1/object/public/products/placeholder.jpeg"}
             alt={category.name}
             className="w-full h-full object-cover"
           />

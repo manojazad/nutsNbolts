@@ -1,5 +1,5 @@
 import { Outlet, Link, Navigate, useLocation } from "react-router-dom";
-import { useAuth } from "../context/AuthContext";
+import { useAuth } from "../../context/AuthContext";
 
 const AdminLayout = () => {
   const { user, loading, signOut } = useAuth();
@@ -17,9 +17,10 @@ const AdminLayout = () => {
 
   const navItems = [
     { to: "/admin", label: "Dashboard" },
-    { to: "/admin/products", label: "Manage Products" },
-    { to: "/admin/queries", label: "Quote Requests" },
-    { to: "/admin/messages", label: "Contact Messages" },
+    { to: "/admin/categories", label: "Categories" },
+    { to: "/admin/products", label: "Products" },
+    { to: "/admin/queries", label: "Quotes" },
+    { to: "/admin/messages", label: "Messages" },
   ];
 
   return (
@@ -36,7 +37,11 @@ const AdminLayout = () => {
                 key={item.to}
                 to={item.to}
                 className={`px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${
-                  location.pathname === item.to
+                  item.to === "/admin"
+                    ? location.pathname === item.to
+                      ? "bg-secondaryBrown text-white"
+                      : "text-gray-600 hover:bg-gray-100"
+                    : location.pathname.startsWith(item.to)
                     ? "bg-secondaryBrown text-white"
                     : "text-gray-600 hover:bg-gray-100"
                 }`}
@@ -66,7 +71,11 @@ const AdminLayout = () => {
             key={item.to}
             to={item.to}
             className={`px-3 py-1.5 rounded-md text-sm font-medium whitespace-nowrap ${
-              location.pathname === item.to
+              item.to === "/admin"
+                ? location.pathname === item.to
+                  ? "bg-secondaryBrown text-white"
+                  : "text-gray-600 hover:bg-gray-100"
+                : location.pathname.startsWith(item.to)
                 ? "bg-secondaryBrown text-white"
                 : "text-gray-600 hover:bg-gray-100"
             }`}

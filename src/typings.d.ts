@@ -1,11 +1,13 @@
 interface Category {
   id: number;
   name: string;
+  image_url?: string | null;
 }
 
 interface ProductType {
   id: number;
   name: string;
+  image_url?: string | null;
 }
 
 interface SubCategory {

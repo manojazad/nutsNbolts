@@ -8,8 +8,10 @@ export function useCategories() {
   useEffect(() => {
     supabase
       .from("categories")
-      .select("id, name")
-      .order("id")
+      .select("id, name, image_url")
+      .is("deleted_at", null)
+      .order("sort_order")
+      .order("name")
       .then(({ data }) => {
         setCategories(data || []);
         setLoading(false);
@@ -26,9 +28,9 @@ export function useProducts() {
   useEffect(() => {
     async function fetchAll() {
       const [catRes, subRes, ptRes] = await Promise.all([
-        supabase.from("categories").select("id, name").order("id"),
-        supabase.from("subcategories").select("id, name, category_id").order("id"),
-        supabase.from("product_types").select("id, name, subcategory_id").order("id"),
+        supabase.from("categories").select("id, name, image_url").is("deleted_at", null).order("sort_order").order("name"),
+        supabase.from("subcategories").select("id, name, category_id").is("deleted_at", null).order("sort_order").order("name"),
+        supabase.from("product_types").select("id, name, subcategory_id, image_url").is("deleted_at", null).order("name"),
       ]);
 
       const cats = catRes.data || [];
@@ -45,6 +47,7 @@ export function useProducts() {
             productTypes: pts.filter((pt) => pt.subcategory_id === sc.id).map((pt) => ({
               id: pt.id,
               name: pt.name,
+              image_url: pt.image_url,
             })),
           })),
       }));

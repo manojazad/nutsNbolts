@@ -2,9 +2,27 @@ import { useParams, Link } from "react-router-dom";
 import { useProducts } from "../hooks/useData";
 import { toSlug } from "../utils/slug";
 import { getCategoryColor, getCategoryIcon } from "../utils/categoryMeta";
-import { useState } from "react";
+import { useState, useEffect, useMemo } from "react";
 import toast from "react-hot-toast";
 import { supabase } from "../lib/supabase";
+
+// ── Spec types ──
+interface SpecRow {
+  id: number;
+  product_id: number;
+  field_label: string;
+  field_type: "fixed_text" | "select_option" | "radio_button";
+  value_type: "text" | "number";
+  sort_order: number;
+}
+interface SpecOptionRow {
+  id: number;
+  specification_id: number;
+  heading: string;
+  subheading: string | null;
+  content: string;
+  sort_order: number;
+}
 
 /* ── Skeleton loader ── */
 const Pulse = ({ className = "" }: { className?: string }) => (
@@ -67,27 +85,63 @@ const ProductPage = () => {
   const [submitted, setSubmitted] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
 
-  if (loading) return <ProductSkeleton />;
+  // Product specifications
+  const [specs, setSpecs] = useState<SpecRow[]>([]);
+  const [specOptions, setSpecOptions] = useState<SpecOptionRow[]>([]);
+  const [specValues, setSpecValues] = useState<Record<number, string>>({});
 
-  // Find product across all categories
-  let foundProduct: { id: number; name: string } | null = null;
-  let foundSubCategory: { id: number; name: string } | null = null;
-  let foundCategory: CategoryWithProducts | null = null;
-
-  for (const cat of products) {
-    for (const sc of cat.subCategories) {
-      for (const pt of sc.productTypes) {
-        if (toSlug(pt.name) === slug) {
-          foundProduct = pt;
-          foundSubCategory = { id: sc.id, name: sc.name };
-          foundCategory = cat;
-          break;
+  // Find product across all categories (memoized so hooks below can depend on id)
+  const { foundProduct, foundSubCategory, foundCategory } = useMemo(() => {
+    let fp: { id: number; name: string; image_url?: string | null } | null = null;
+    let fsc: { id: number; name: string } | null = null;
+    let fc: CategoryWithProducts | null = null;
+    for (const cat of products) {
+      for (const sc of cat.subCategories) {
+        for (const pt of sc.productTypes) {
+          if (toSlug(pt.name) === slug) {
+            fp = pt; fsc = { id: sc.id, name: sc.name }; fc = cat;
+            break;
+          }
         }
+        if (fp) break;
       }
-      if (foundProduct) break;
+      if (fp) break;
     }
-    if (foundProduct) break;
-  }
+    return { foundProduct: fp, foundSubCategory: fsc, foundCategory: fc };
+  }, [products, slug]);
+
+  const productId = foundProduct?.id ?? 0;
+
+  // Fetch specs for this product
+  useEffect(() => {
+    if (!productId) return;
+    async function fetchSpecs() {
+      const { data: specData } = await supabase
+        .from("product_specifications")
+        .select("*")
+        .eq("product_id", productId)
+        .order("sort_order")
+        .order("id");
+      const fetched = specData || [];
+      setSpecs(fetched);
+
+      const specIds = fetched.map((s: SpecRow) => s.id);
+      if (specIds.length > 0) {
+        const { data: optData } = await supabase
+          .from("product_specification_options")
+          .select("*")
+          .in("specification_id", specIds)
+          .order("sort_order")
+          .order("id");
+        setSpecOptions(optData || []);
+      } else {
+        setSpecOptions([]);
+      }
+    }
+    fetchSpecs();
+  }, [productId]);
+
+  if (loading) return <ProductSkeleton />;
 
   if (!foundProduct || !foundCategory || !foundSubCategory) {
     return (
@@ -116,6 +170,13 @@ const ProductPage = () => {
     else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email))
       newErrors.email = "Invalid email format";
     if (!formData.phone.trim()) newErrors.phone = "Phone number is required";
+    // Validate specs – all are mandatory
+    for (const spec of specs) {
+      const val = (specValues[spec.id] || "").trim();
+      if (!val) {
+        newErrors[`spec_${spec.id}`] = `${spec.field_label} is required`;
+      }
+    }
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -124,13 +185,22 @@ const ProductPage = () => {
     e.preventDefault();
     if (!validate()) return;
 
+    // Build specifications string from spec values + freeform text
+    const specLines = specs
+      .map((s) => `${s.field_label}: ${specValues[s.id] || ""}`)
+      .filter((l) => l.includes(": ") && !l.endsWith(": "));
+    const allSpecs = [
+      ...specLines,
+      formData.specifications ? `Additional: ${formData.specifications}` : "",
+    ].filter(Boolean).join("\n");
+
     const { error } = await supabase.from("quote_requests").insert({
       product_type_id: foundProduct!.id,
       product_name: foundProduct!.name,
       category_name: foundCategory!.name,
       subcategory_name: foundSubCategory!.name,
       quantity: formData.quantity,
-      specifications: formData.specifications,
+      specifications: allSpecs,
       contact_name: formData.contactName,
       company_name: formData.companyName,
       email: formData.email,
@@ -196,6 +266,8 @@ const ProductPage = () => {
     );
   }
 
+  const PLACEHOLDER_IMAGE = "https://gynvfilnfwxbvnkbatpa.supabase.co/storage/v1/object/public/products/placeholder.jpeg";
+
   return (
     <div className="max-w-screen-2xl mx-auto px-5 max-[400px]:px-3 pb-16">
       {/* Breadcrumb */}
@@ -212,9 +284,8 @@ const ProductPage = () => {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         {/* Left: Product Info */}
         <div>
-          <div className="mt-6">
+          <div className="mt-2">
             <h1 className="text-3xl font-bold">{foundProduct.name}</h1>
-            <p className="text-gray-500 mt-1">SKU: PT-{foundProduct.id}</p>
 
             <div className="mt-4 border-t pt-4">
               <div className="grid grid-cols-2 gap-y-2 text-sm">
@@ -234,8 +305,15 @@ const ProductPage = () => {
                 <span className="font-medium">{foundProduct.name}</span>
               </div>
             </div>
-
-            <div className="mt-6 bg-gray-50 border border-gray-200 rounded-lg p-4">
+          </div>
+          <div className="rounded-lg h-[500px]">
+            <img
+              src={foundProduct.image_url || PLACEHOLDER_IMAGE}
+              alt={foundProduct.name}
+              className="w-full h-full object-cover mt-4"
+            />
+          </div>
+          <div className="mt-6 bg-gray-50 border border-gray-200 rounded-lg p-4">
               <p className="text-gray-700 text-sm">
                 <strong>B2B Pricing:</strong> Prices are customized based on
                 quantity, specifications, and delivery requirements. Submit a
@@ -243,7 +321,6 @@ const ProductPage = () => {
                 within 24 hours.
               </p>
             </div>
-          </div>
         </div>
 
         {/* Right: RFQ Form */}
@@ -267,16 +344,120 @@ const ProductPage = () => {
               )}
             </div>
 
+            {/* Dynamic product specifications */}
+            {specs.length > 0 && (
+              <>
+                <hr className="my-4" />
+                <h3 className="text-lg font-semibold">Product Specifications</h3>
+                {specs.map((spec) => {
+                  const opts = specOptions.filter((o) => o.specification_id === spec.id);
+                  const errKey = `spec_${spec.id}`;
+
+                  if (spec.field_type === "fixed_text") {
+                    return (
+                      <div key={spec.id}>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                          {spec.field_label} *
+                        </label>
+                        <input
+                          type={spec.value_type === "number" ? "number" : "text"}
+                          value={specValues[spec.id] || ""}
+                          onChange={(e) => {
+                            setSpecValues((prev) => ({ ...prev, [spec.id]: e.target.value }));
+                            if (errors[errKey]) setErrors((prev) => { const n = { ...prev }; delete n[errKey]; return n; });
+                          }}
+                          className="w-full border rounded-md px-3 py-2 focus:ring-2 focus:ring-secondaryBrown focus:border-transparent"
+                          placeholder={`Enter ${spec.field_label.toLowerCase()}…`}
+                        />
+                        {errors[errKey] && <p className="text-red-600 text-xs mt-1">{errors[errKey]}</p>}
+                      </div>
+                    );
+                  }
+
+                  if (spec.field_type === "select_option") {
+                    return (
+                      <div key={spec.id}>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                          {spec.field_label} *
+                        </label>
+                        <select
+                          value={specValues[spec.id] || ""}
+                          onChange={(e) => {
+                            setSpecValues((prev) => ({ ...prev, [spec.id]: e.target.value }));
+                            if (errors[errKey]) setErrors((prev) => { const n = { ...prev }; delete n[errKey]; return n; });
+                          }}
+                          className="w-full border rounded-md px-3 py-2 focus:ring-2 focus:ring-secondaryBrown focus:border-transparent"
+                        >
+                          <option value="">Select {spec.field_label.toLowerCase()}…</option>
+                          {opts.map((opt) => (
+                            <option key={opt.id} value={opt.content}>
+                              {opt.content}
+                              {opt.heading && opt.heading !== opt.content ? ` (${opt.heading})` : ""}
+                              {opt.subheading ? ` — ${opt.subheading}` : ""}
+                            </option>
+                          ))}
+                        </select>
+                        {errors[errKey] && <p className="text-red-600 text-xs mt-1">{errors[errKey]}</p>}
+                      </div>
+                    );
+                  }
+
+                  // radio_button
+                  return (
+                    <div key={spec.id}>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        {spec.field_label} *
+                      </label>
+                      <div className="space-y-2 mt-1">
+                        {opts.map((opt) => (
+                          <label
+                            key={opt.id}
+                            className={`flex items-start gap-3 p-3 border rounded-md cursor-pointer transition-colors ${
+                              specValues[spec.id] === opt.content
+                                ? "border-secondaryBrown bg-secondaryBrown/5"
+                                : "border-gray-200 hover:border-gray-300"
+                            }`}
+                          >
+                            <input
+                              type="radio"
+                              name={`spec_${spec.id}`}
+                              value={opt.content}
+                              checked={specValues[spec.id] === opt.content}
+                              onChange={(e) => {
+                                setSpecValues((prev) => ({ ...prev, [spec.id]: e.target.value }));
+                                if (errors[errKey]) setErrors((prev) => { const n = { ...prev }; delete n[errKey]; return n; });
+                              }}
+                              className="mt-0.5 accent-secondaryBrown"
+                            />
+                            <div>
+                              <span className="text-sm font-medium">{opt.content}</span>
+                              {opt.heading && opt.heading !== opt.content && (
+                                <span className="text-xs text-gray-500 ml-1">({opt.heading})</span>
+                              )}
+                              {opt.subheading && (
+                                <p className="text-xs text-gray-400">{opt.subheading}</p>
+                              )}
+                            </div>
+                          </label>
+                        ))}
+                      </div>
+                      {errors[errKey] && <p className="text-red-600 text-xs mt-1">{errors[errKey]}</p>}
+                    </div>
+                  );
+                })}
+              </>
+            )}
+
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Specifications / Requirements
+                Additional Specifications / Requirements
               </label>
               <textarea
                 name="specifications"
-                rows={4}
+                rows={3}
                 value={formData.specifications}
                 onChange={handleChange}
-                placeholder="Describe your custom specs, technical requirements, or additional details..."
+                placeholder="Any additional specs, technical requirements, or details..."
                 className="w-full border rounded-md px-3 py-2 focus:ring-2 focus:ring-secondaryBrown focus:border-transparent"
               />
             </div>

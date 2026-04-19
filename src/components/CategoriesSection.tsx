@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { useCategories } from "../hooks/useData";
 import { toSlug } from "../utils/slug";
-import { getCategoryImage } from "../utils/categoryMeta";
+
 
 const CategoriesSection = () => {
   const { categories, loading } = useCategories();
@@ -31,7 +31,7 @@ const CategoriesSection = () => {
           >
             <div className="h-40 overflow-hidden">
               <img
-                src={getCategoryImage(cat.id)}
+                src={cat.image_url || ""}
                 alt={cat.name}
                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
               />

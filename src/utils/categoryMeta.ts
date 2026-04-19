@@ -23,6 +23,3 @@ export const getCategoryIcon = (id: number): string => {
   return CATEGORY_ICONS[id] || "📦";
 };
 
-export const getCategoryImage = (id: number): string => {
-  return `https://gynvfilnfwxbvnkbatpa.supabase.co/storage/v1/object/public/category/${id}.jpeg`;
-};
